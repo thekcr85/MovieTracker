@@ -1,4 +1,4 @@
-# MovieTracker 🎬
+﻿# MovieTracker 🎬
 
 > AI-powered movie tracking app with personalized recommendations using OpenAI GPT-4o-mini
 
