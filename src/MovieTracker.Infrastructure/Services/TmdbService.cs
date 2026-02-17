@@ -19,7 +19,12 @@ public class TmdbService : ITmdbService
 	public TmdbService(HttpClient httpClient, IConfiguration configuration)
 	{
 		_httpClient = httpClient;
-		_apiKey = configuration["TMDB:ApiKey"] ?? throw new ArgumentNullException("TMDB:ApiKey");
+
+		// Read from environment variable first, then fallback to config
+		_apiKey = Environment.GetEnvironmentVariable("TMDB_API_KEY") 
+			?? configuration["TMDB:ApiKey"] 
+			?? throw new ArgumentNullException("TMDB_API_KEY", "TMDB API Key is not configured");
+
 		_baseUrl = configuration["TMDB:BaseUrl"] ?? "https://api.themoviedb.org/3";
 
 		_jsonOptions = new JsonSerializerOptions
