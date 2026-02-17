@@ -1,0 +1,64 @@
+@using MovieTracker.Domain.Entities
+
+<div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Review: @Movie.Title</h5>
+                <button type="button" class="btn-close" @onclick="OnClose"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Your Rating (1-10)</label>
+                    <input type="number" class="form-control" min="1" max="10" 
+                           @bind="userRating" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Your Review</label>
+                    <textarea class="form-control" rows="5" 
+                              @bind="comment" placeholder="Write your thoughts about the movie..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="SaveReview">Save Review</button>
+                <button type="button" class="btn btn-secondary" @onclick="OnClose">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public WatchedMovie Movie { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<Review> OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private int? userRating;
+    private string comment = "";
+
+    protected override void OnParametersSet()
+    {
+        if (Movie.Review != null)
+        {
+            userRating = Movie.Review.UserRating;
+            comment = Movie.Review.Comment;
+        }
+    }
+
+    private async Task SaveReview()
+    {
+        var review = new Review
+        {
+            WatchedMovieId = Movie.Id,
+            UserRating = userRating,
+            Comment = comment,
+            CreatedDate = DateTime.UtcNow
+        };
+
+        await OnSave.InvokeAsync(review);
+    }
+}

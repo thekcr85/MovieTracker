@@ -1,0 +1,51 @@
+﻿@inherits LayoutComponentBase
+
+<div class="d-flex min-vh-100">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar bg-dark d-flex flex-column p-3 border-end">
+        <!-- Branding -->
+        <div class="mb-4 pb-3 border-bottom">
+            <h2 class="text-white mb-0">
+                <i class="bi bi-film me-2"></i>Movie Tracker
+            </h2>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="nav flex-column gap-1">
+            <a href="/" class="nav-link @GetActiveClass("")">
+                <i class="bi bi-house-door me-2"></i>Home
+            </a>
+            <a href="/watchlist" class="nav-link @GetActiveClass("watchlist")">
+                <i class="bi bi-bookmark me-2"></i>Watchlist
+            </a>
+            <a href="/watched" class="nav-link @GetActiveClass("watched")">
+                <i class="bi bi-check-circle me-2"></i>Watched
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-fill">
+        <div class="container-fluid p-4">
+            @Body
+        </div>
+    </main>
+</div>
+
+@code {
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    private string GetActiveClass(string page)
+    {
+        var currentPath = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "").ToLower().Split('?')[0];
+
+        if (string.IsNullOrEmpty(page) && string.IsNullOrEmpty(currentPath))
+            return "active";
+
+        if (!string.IsNullOrEmpty(page) && currentPath.StartsWith(page))
+            return "active";
+
+        return "text-light";
+    }
+}

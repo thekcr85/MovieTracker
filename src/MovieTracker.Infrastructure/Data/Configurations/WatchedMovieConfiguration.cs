@@ -1,0 +1,50 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MovieTracker.Domain.Entities;
+using System.Text.Json;
+
+namespace MovieTracker.Infrastructure.Data.Configurations;
+
+public class WatchedMovieConfiguration : IEntityTypeConfiguration<WatchedMovie>
+{
+	public void Configure(EntityTypeBuilder<WatchedMovie> builder)
+	{
+		builder.HasKey(m => m.Id);
+
+		builder.Property(m => m.TmdbId)
+			.IsRequired();
+
+		builder.Property(m => m.Title)
+			.IsRequired()
+			.HasMaxLength(500);
+
+		builder.Property(m => m.PosterPath)
+			.HasMaxLength(500);
+
+		builder.Property(m => m.Overview)
+			.HasMaxLength(2000);
+
+		builder.Property(m => m.Director)
+			.HasMaxLength(200);
+
+		builder.Property(m => m.Genres)
+			.HasMaxLength(500);
+
+		builder.Property(m => m.Actors)
+			.HasMaxLength(1000)
+			.HasConversion(
+				v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+				v => v == null ? null : JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null)
+			);
+
+		builder.Property(m => m.WatchedDate)
+			.IsRequired();
+
+		builder.HasOne(m => m.Review)
+			.WithOne(r => r.WatchedMovie)
+			.HasForeignKey<Review>(r => r.WatchedMovieId)
+			.OnDelete(DeleteBehavior.Cascade);
+
+		builder.HasIndex(m => m.TmdbId);
+	}
+}

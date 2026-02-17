@@ -1,0 +1,80 @@
+/* Minimal custom styles - Bootstrap Darkly theme handles most styling */
+
+/* Base font sizing */
+body {
+  font-size: 0.875rem;
+}
+
+/* Sidebar width - fixed to prevent shrinking */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
+  min-height: 100vh;
+  flex-shrink: 0;
+}
+
+/* Movie item hover effect */
+.movie-item {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.movie-item:hover {
+  background-color: rgba(55, 90, 127, 0.15);
+}
+
+/* Movie poster sizing */
+.movie-poster-sm {
+  width: 60px;
+  height: 90px;
+  object-fit: cover;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure proper scrolling */
+.scrollable-list {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for dark theme */
+.scrollable-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-list::-webkit-scrollbar-track {
+  background: #2c3034;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+  background: #375a7f;
+  border-radius: 4px;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb:hover {
+  background: #4e73a0;
+}
+
+/* Fix for clickable items */
+.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Smaller headings */
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.1rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.9rem; }

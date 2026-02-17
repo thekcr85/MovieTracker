@@ -1,0 +1,95 @@
+@using MovieTracker.Domain.Entities
+
+<div class="modal show d-block" tabindex="-1" role="dialog" aria-modal="true" style="background-color: rgba(0,0,0,0.7);">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Movie.Title</h5>
+                <button type="button" class="btn-close" @onclick="OnClose" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <img src="@(Movie.PosterPath ?? "/images/no-poster.png")" 
+                             class="img-fluid rounded" 
+                             alt="@Movie.Title" />
+                    </div>
+                    <div class="col-md-8">
+                        @if (Movie.ReleaseDate.HasValue)
+                        {
+                            <p class="mb-2">
+                                <strong><i class="bi bi-calendar-event me-2"></i>Release:</strong> 
+                                @Movie.ReleaseDate.Value.ToString("MMM dd, yyyy")
+                            </p>
+                        }
+                        @if (Movie.Runtime.HasValue)
+                        {
+                            <p class="mb-2">
+                                <strong><i class="bi bi-clock me-2"></i>Runtime:</strong> 
+                                @Movie.Runtime min
+                            </p>
+                        }
+                        @if (!string.IsNullOrEmpty(Movie.Genres))
+                        {
+                            <p class="mb-2">
+                                <strong><i class="bi bi-tag me-2"></i>Genres:</strong> 
+                                @Movie.Genres
+                            </p>
+                        }
+                        @if (!string.IsNullOrEmpty(Movie.Director))
+                        {
+                            <p class="mb-2">
+                                <strong><i class="bi bi-person-badge me-2"></i>Director:</strong> 
+                                @Movie.Director
+                            </p>
+                        }
+                        @if (Movie.Rating.HasValue)
+                        {
+                            <p class="mb-2">
+                                <strong><i class="bi bi-star-fill me-2"></i>Rating:</strong> 
+                                <span class="badge bg-warning text-dark">⭐ @Movie.Rating.Value.ToString("0.0")/10</span>
+                            </p>
+                        }
+                        @if (Movie.Actors.Any())
+                        {
+                            <p class="mb-2">
+                                <strong><i class="bi bi-people me-2"></i>Cast:</strong> 
+                                @string.Join(", ", Movie.Actors)
+                            </p>
+                        }
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Movie.Overview))
+                {
+                    <div class="mt-3">
+                        <h6><i class="bi bi-card-text me-2"></i>Overview</h6>
+                        <p class="text-muted">@Movie.Overview</p>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" @onclick="() => OnAddToWatchlist.InvokeAsync(Movie)">
+                    <i class="bi bi-bookmark-plus me-1"></i>Add to Watchlist
+                </button>
+                <button type="button" class="btn btn-info" @onclick="() => OnAddToWatched.InvokeAsync(Movie)">
+                    <i class="bi bi-check-circle me-1"></i>Add to Watched
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="OnClose">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Movie Movie { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<Movie> OnAddToWatchlist { get; set; }
+
+    [Parameter]
+    public EventCallback<Movie> OnAddToWatched { get; set; }
+}

@@ -1,0 +1,179 @@
+@page "/watched"
+@using MovieTracker.Domain.Entities
+@using MovieTracker.Domain.Interfaces
+@inject IMovieService MovieService
+@rendermode InteractiveServer
+
+<PageTitle>Watched - Movie Tracker</PageTitle>
+
+<div class="mb-4">
+    <h2 class="mb-0">
+        <i class="bi bi-check-circle me-2"></i>Watched Movies
+    </h2>
+</div>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error:</strong> @errorMessage
+        <button type="button" class="btn-close" @onclick="ClearError"></button>
+    </div>
+}
+
+@if (isLoading)
+{
+    <div class="alert alert-info d-flex align-items-center">
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <span>Loading...</span>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Movies You've Watched (@watched.Count)</h5>
+    </div>
+
+    <div class="card-body p-0">
+        @if (watched.Any())
+        {
+            <div class="list-group list-group-flush scrollable-list">
+                @foreach (var movie in watched)
+                {
+                    <div class="list-group-item list-group-item-action clickable d-flex gap-3 py-3"
+                         @onclick="() => ShowMovieDetails(movie)">
+                        <img src="@(movie.PosterPath ?? "/images/no-poster.png")" 
+                             alt="@movie.Title poster"
+                             class="movie-poster-sm rounded flex-shrink-0" />
+
+                        <div class="flex-fill">
+                            <h6 class="mb-1">@movie.Title (@movie.ReleaseDate?.Year)</h6>
+                            <p class="mb-1 small text-muted">
+                                
+                                @if (movie.Review != null && movie.Review.UserRating.HasValue)
+                                {
+                                    <span class="badge bg-warning text-dark ms-2">⭐ @movie.Review.UserRating/10</span>
+                                }
+                            </p>
+                            <p class="mb-1 small text-muted">
+                                <i class="bi bi-calendar-check me-1"></i>Watched: @movie.WatchedDate.ToString("MMM dd, yyyy")
+                            </p>
+                            @if (!string.IsNullOrEmpty(movie.Genres))
+                            {
+                                <p class="mb-1 small text-muted">
+                                    <i class="bi bi-tag me-1"></i>@movie.Genres
+                                </p>
+                            }
+                            @if (movie.Review != null && !string.IsNullOrEmpty(movie.Review.Comment))
+                            {
+                                <p class="mb-0 small fst-italic">
+                                    "@(movie.Review.Comment.Length > 80 ? movie.Review.Comment.Substring(0, 80) + "..." : movie.Review.Comment)"
+                                </p>
+                            }
+                        </div>
+
+                        <div class="flex-shrink-0">
+                            <button class="btn btn-sm btn-primary" 
+                                    @onclick:stopPropagation="true"
+                                    @onclick="() => ShowReviewDialog(movie)"
+                                    disabled="@isLoading">
+                                <i class="bi bi-star me-1"></i>@(movie.Review != null ? "Edit" : "Review")
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 px-3">
+                <i class="bi bi-check-circle display-1 text-muted mb-3"></i>
+                <h4 class="mb-2">No watched movies yet</h4>
+                <p class="text-muted mb-3">Start watching movies and mark them as watched to keep track!</p>
+                <a href="/" class="btn btn-primary">
+                    <i class="bi bi-search me-2"></i>Search Movies
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Movie Details Modal -->
+@if (selectedMovie != null)
+{
+    <WatchedMovieModal Movie="selectedMovie" 
+                      OnClose="CloseMovieDetails"
+                      OnEditReview="ShowReviewDialog" />
+}
+
+<!-- Review Modal -->
+@if (reviewMovie != null)
+{
+    <ReviewModal Movie="reviewMovie"
+                OnSave="HandleReviewSave"
+                OnClose="CloseReviewDialog" />
+}
+
+@code {
+    private List<WatchedMovie> watched = new();
+    private WatchedMovie? selectedMovie;
+    private WatchedMovie? reviewMovie;
+    private bool isLoading;
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWatched();
+    }
+
+    private async Task SafeExecute(Func<Task> action)
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = "";
+            await action();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            Console.WriteLine($"Error: {ex}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void ClearError() => errorMessage = "";
+
+    private async Task LoadWatched()
+    {
+        await SafeExecute(async () =>
+        {
+            watched = await MovieService.GetWatchedMoviesAsync();
+        });
+    }
+
+    private void ShowMovieDetails(WatchedMovie movie) => selectedMovie = movie;
+
+    private void CloseMovieDetails() => selectedMovie = null;
+
+    private void ShowReviewDialog(WatchedMovie movie)
+    {
+        reviewMovie = movie;
+        selectedMovie = null;
+    }
+
+    private void CloseReviewDialog() => reviewMovie = null;
+
+    private async Task HandleReviewSave(Review review)
+    {
+        await SafeExecute(async () =>
+        {
+            await MovieService.SaveReviewAsync(review);
+            await LoadWatched();
+            reviewMovie = null;
+        });
+    }
+}

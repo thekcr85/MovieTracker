@@ -1,0 +1,60 @@
+@using MovieTracker.Domain.Entities
+
+<div class="card h-100 card-hover clickable" @onclick="() => OnShowDetails.InvokeAsync(Movie)">
+    @if (!string.IsNullOrEmpty(Movie.PosterPath))
+    {
+        <img src="@Movie.PosterPath" class="card-img-top" alt="@Movie.Title" style="height: 300px; object-fit: cover;" />
+    }
+    else
+    {
+        <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
+            <div class="text-center">
+                <i class="bi bi-film" style="font-size: 3rem;"></i>
+                <p class="mt-2 mb-0">No Poster</p>
+            </div>
+        </div>
+    }
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title">@Movie.Title</h5>
+        <p class="card-text small text-muted">
+            @Movie.ReleaseDate?.Year
+            @if (Movie.Rating.HasValue)
+            {
+                <span class="badge bg-warning text-dark ms-2">⭐ @Movie.Rating.Value.ToString("0.0")</span>
+            }
+        </p>
+        <div class="mt-auto d-grid gap-2">
+            <button class="btn btn-sm btn-outline-primary" 
+                    @onclick:stopPropagation="true" 
+                    @onclick="() => OnShowDetails.InvokeAsync(Movie)">
+                <i class="bi bi-info-circle me-1"></i>Details
+            </button>
+            <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-success" 
+                        @onclick:stopPropagation="true" 
+                        @onclick="() => OnAddToWatchlist.InvokeAsync(Movie)">
+                    <i class="bi bi-bookmark-plus"></i> Watchlist
+                </button>
+                <button class="btn btn-sm btn-outline-info" 
+                        @onclick:stopPropagation="true" 
+                        @onclick="() => OnAddToWatched.InvokeAsync(Movie)">
+                    <i class="bi bi-check-circle"></i> Watched
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Movie Movie { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<Movie> OnAddToWatchlist { get; set; }
+
+    [Parameter]
+    public EventCallback<Movie> OnAddToWatched { get; set; }
+
+    [Parameter]
+    public EventCallback<Movie> OnShowDetails { get; set; }
+}

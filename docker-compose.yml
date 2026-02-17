@@ -1,0 +1,49 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/src
+    working_dir: /src/src/MovieTracker.Web
+    command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=movietracker;User=movieuser;Password=${MYSQL_PASSWORD};
+      - TmdbApiKey=${TMDB_API_KEY}
+      - OpenAI__ApiKey=${OPENAI_API_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - movietracker-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=movietracker
+      - MYSQL_USER=movieuser
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "movieuser", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - movietracker-network
+
+volumes:
+  mysql-data:
+
+networks:
+  movietracker-network:
+    driver: bridge

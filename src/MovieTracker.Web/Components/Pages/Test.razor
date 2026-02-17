@@ -1,0 +1,62 @@
+@page "/test"
+@rendermode InteractiveServer
+
+<PageTitle>Test Page</PageTitle>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h3>✅ Blazor Test Page</h3>
+        </div>
+        <div class="card-body">
+            <h4>If you can see this page, Blazor is working! 🎉</h4>
+            
+            <div class="mt-4">
+                <h5>System Information:</h5>
+                <ul>
+                    <li><strong>Current Time:</strong> @DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</li>
+                    <li><strong>Environment:</strong> @Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")</li>
+                    <li><strong>Interactive:</strong> @(isInteractive ? "Yes ✅" : "No ❌")</li>
+                </ul>
+            </div>
+
+            <div class="mt-4">
+                <h5>Interactivity Test:</h5>
+                <p>Counter: <strong>@counter</strong></p>
+                <button class="btn btn-primary" @onclick="IncrementCounter">
+                    Click Me! (@counter)
+                </button>
+            </div>
+
+            <div class="mt-4">
+                <h5>Bootstrap Test:</h5>
+                <button class="btn btn-primary me-2">Primary</button>
+                <button class="btn btn-success me-2">Success</button>
+                <button class="btn btn-danger me-2">Danger</button>
+                <button class="btn btn-warning me-2">Warning</button>
+                <button class="btn btn-info me-2">Info</button>
+            </div>
+
+            <div class="mt-4 alert alert-info">
+                <h5>✅ Everything looks good!</h5>
+                <p>Your Blazor application is running correctly.</p>
+                <a href="/" class="btn btn-primary">Go to Home Page</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int counter = 0;
+    private bool isInteractive = false;
+
+    protected override void OnInitialized()
+    {
+        isInteractive = true;
+    }
+
+    private void IncrementCounter()
+    {
+        counter++;
+    }
+}

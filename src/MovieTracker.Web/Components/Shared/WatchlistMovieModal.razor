@@ -1,0 +1,112 @@
+@using MovieTracker.Domain.Entities
+
+<article class="modal fade show d-block app-modal" role="dialog" aria-labelledby="movieModalLabel" @onclick="OnClose" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" @onclick:stopPropagation="true">
+        <header class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="movieModalLabel">@Movie.Title</h2>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="OnClose"></button>
+            </div>
+            
+            <section class="modal-body">
+                <div class="row g-4">
+                    <!-- Poster -->
+                    <div class="col-md-4">
+                        <img src="@(Movie.PosterPath ?? "/images/no-poster.png")" 
+                             alt="@Movie.Title poster"
+                             class="img-fluid rounded" />
+                    </div>
+                    
+                    <!-- Details -->
+                    <aside class="col-md-8">
+                        @if (!string.IsNullOrEmpty(Movie.Director))
+                        {
+                            <dl class="mb-3">
+                                <dt class="fw-semibold">Director:</dt>
+                                <dd>@Movie.Director</dd>
+                            </dl>
+                        }
+
+                        @if (Movie.Actors != null && Movie.Actors.Any())
+                        {
+                            <dl class="mb-3">
+                                <dt class="fw-semibold">Cast:</dt>
+                                <dd>@string.Join(", ", Movie.Actors)</dd>
+                            </dl>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Movie.Genres))
+                        {
+                            <dl class="mb-3">
+                                <dt class="fw-semibold">Genres:</dt>
+                                <dd>@Movie.Genres</dd>
+                            </dl>
+                        }
+
+                        @if (Movie.Runtime.HasValue)
+                        {
+                            <dl class="mb-3">
+                                <dt class="fw-semibold">Runtime:</dt>
+                                <dd>@Movie.Runtime minutes</dd>
+                            </dl>
+                        }
+
+                        @if (Movie.ReleaseDate.HasValue)
+                        {
+                            <dl class="mb-3">
+                                <dt class="fw-semibold">Release Date:</dt>
+                                <dd>@Movie.ReleaseDate.Value.ToString("MMM dd, yyyy")</dd>
+                            </dl>
+                        }
+
+                        @if (Movie.Rating.HasValue)
+                        {
+                            <dl class="mb-3">
+                                <dt class="fw-semibold">TMDB Rating:</dt>
+                                <dd>⭐ @Movie.Rating.Value.ToString("0.0")/10</dd>
+                            </dl>
+                        }
+
+                        <dl class="mb-3">
+                            <dt class="fw-semibold">Added:</dt>
+                            <dd>@Movie.AddedDate.ToString("MMM dd, yyyy")</dd>
+                        </dl>
+                    </aside>
+                </div>
+
+                <!-- Overview -->
+                @if (!string.IsNullOrEmpty(Movie.Overview))
+                {
+                    <article class="mt-4">
+                        <h3 class="h6 fw-semibold mb-2">Overview</h3>
+                        <p class="text-muted">@Movie.Overview</p>
+                    </article>
+                }
+            </section>
+            
+            <footer class="modal-footer">
+                <button type="button" class="btn btn-success" @onclick="() => OnMoveToWatched.InvokeAsync(Movie.Id)">
+                    <i class="bi bi-check-circle me-2"></i>Mark as Watched
+                </button>
+                <button type="button" class="btn btn-danger" @onclick="() => OnRemove.InvokeAsync(Movie.Id)">
+                    <i class="bi bi-trash me-2"></i>Remove
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="OnClose">Close</button>
+            </footer>
+        </header>
+    </div>
+</article>
+
+@code {
+    [Parameter]
+    public WatchlistMovie Movie { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnMoveToWatched { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnRemove { get; set; }
+}
