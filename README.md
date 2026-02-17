@@ -199,6 +199,36 @@ docker compose build --no-cache
 4. Create new secret key
 5. Copy your key (starts with `sk-`)
 
+## Screenshots
+
+### Home - Search & AI Recommendations
+Search for movies and get personalized AI-powered recommendations based on your viewing history.
+
+![Home Search](docs/images/home-search.png)
+
+![Search Results](docs/images/search-results.png)
+
+![AI Recommendations](docs/images/ai-recommendations.png)
+
+### Movie Details
+View comprehensive information about any movie including cast, director, rating, and overview.
+
+![Movie Details](docs/images/movie-details.png)
+
+### Watchlist
+Keep track of movies you want to watch. Easily move them to your watched list when done.
+
+![Watchlist](docs/images/watchlist.png)
+
+### Watched Movies with Reviews
+Mark movies as watched, rate them (1-10), and write your own reviews.
+
+![Watched Movies](docs/images/watched.png)
+
+![Add Review and Rating](docs/images/add-review.png)
+
+![Watched with Review](docs/images/watched-with-review-and-rating.png)
+
 ## Architecture Highlights
 
 ✅ **Clean Architecture** - testable, maintainable  
