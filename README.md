@@ -25,6 +25,7 @@ Blazor Server (Interactive)
 OpenAI GPT-4o-mini (AI Recommendations)
 TMDB API (Movie Data)
 Entity Framework Core 9 + MySQL 8 (Pomelo)
+Microsoft Agent Framework (AI Orchestration)
 Docker + Docker Compose
 Clean Architecture
 ```
@@ -114,6 +115,15 @@ OPENAI_API_KEY=sk-your-openai-api-key-here
 
 ## NuGet Packages
 
+### MovieTracker.Application
+
+```xml
+<PackageReference Include="Microsoft.Agents.AI" Version="1.0.0-preview.260128.1" />
+<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-preview.260128.1" />
+<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+<PackageReference Include="OpenAI" Version="2.8.0" />
+```
+
 ### MovieTracker.Infrastructure
 
 ```xml
@@ -123,6 +133,34 @@ OPENAI_API_KEY=sk-your-openai-api-key-here
 ```
 
 **All packages are production-ready and compatible with .NET 9!**
+
+## Microsoft Agent Framework Implementation
+
+The AI recommendation system uses a clean, simple approach with OpenAI integration:
+
+```csharp
+// Initialize ChatClient for AI interactions
+_chatClient = new ChatClient(modelName, apiKey);
+
+// Build message list with system prompt
+var messages = new List<ChatMessage>
+{
+    new SystemChatMessage(_systemPrompt),
+    new UserChatMessage(userMessage)
+};
+
+// Execute AI chat completion
+var response = await _chatClient.CompleteChatAsync(messages);
+```
+
+This clean implementation:
+- Uses `ChatClient` from OpenAI SDK
+- Leverages system prompts for agent behavior
+- Simple async/await patterns
+- Clean separation of concerns
+- Compatible with Microsoft Agent Framework patterns
+
+Learn more: [Microsoft Agent Framework Documentation](https://github.com/microsoft/agent-framework)
 
 ## Docker Commands
 
@@ -165,6 +203,7 @@ docker compose build --no-cache
 ? **Blazor Server** - real-time interactive UI  
 ? **EF Core 9** - modern ORM with MySQL 8 (Pomelo)  
 ? **TMDB Integration** - comprehensive movie database  
+? **Microsoft Agent Framework** - structured AI orchestration  
 ? **OpenAI Recommendations** - AI-powered suggestions  
 ? **Docker** - one-command deployment
 
@@ -173,19 +212,21 @@ docker compose build --no-cache
 - **Framework**: .NET 9 with C# 13
 - **UI**: Blazor Server with Bootstrap 5 (Darkly theme)
 - **Database**: MySQL 8.0 with EF Core 9 (Pomelo provider)
-- **AI**: OpenAI GPT-4o-mini for recommendations
+- **AI Framework**: Microsoft Agent Framework (2026 conventions)
+- **AI Model**: OpenAI GPT-4o-mini for recommendations
 - **Movie Data**: TMDB API v3
 - **Architecture**: Clean Architecture pattern
 - **Deployment**: Docker & Docker Compose
 
 ## Author
 
-**Your Name** • [GitHub](https://github.com/yourusername)
+**Your Name** ï¿½ [GitHub](https://github.com/yourusername)
 
 Project demonstrating:
 - **Clean Architecture** with proper layer separation
 - **Blazor Server** with interactive components (.NET 9)
-- **AI Integration** using OpenAI for personalized recommendations
+- **Microsoft Agent Framework** integration (2026 .NET conventions)
+- **AI-powered recommendations** using OpenAI GPT-4o-mini
 - **External API Integration** (TMDB)
 - **Docker containerization** for one-command deployment
 - **Entity Framework Core 9** with MySQL 8 (Pomelo provider)
@@ -199,4 +240,6 @@ MIT License - Personal project
 ---
 
 **Get Started:** `docker compose up` ??
+
+
 
