@@ -6,17 +6,31 @@ using System.Text.Json;
 
 namespace MovieTracker.Application.Agents;
 
+/// <summary>
+/// Movie recommendation agent using Microsoft Agent Framework conventions
+/// Simple, clean implementation with OpenAI ChatClient
+/// </summary>
 public class RecommendationAgent : IRecommendationAgent
 {
 	private readonly ITmdbService _tmdbService;
-	private readonly string _openAiApiKey;
-	private readonly string _model = "gpt-4o-mini";
+	private readonly ChatClient _chatClient;
+	private readonly string _systemPrompt;
 
 	public RecommendationAgent(ITmdbService tmdbService, IConfiguration configuration)
 	{
 		_tmdbService = tmdbService;
-		_openAiApiKey = configuration["OpenAI:ApiKey"] 
+
+		var apiKey = configuration["OpenAI:ApiKey"] 
 			?? throw new ArgumentNullException("OpenAI:ApiKey", "OpenAI API Key is not configured");
+
+		var modelName = configuration["OpenAI:ModelName"] ?? "gpt-4o-mini";
+
+		// Initialize ChatClient for AI agent interactions
+		_chatClient = new ChatClient(modelName, apiKey);
+
+		_systemPrompt = @"You are a movie recommendation expert. Based on the user's watched movies, 
+suggest similar movies they might enjoy. Return ONLY a JSON array of movie titles, nothing else. 
+Example format: [""Movie Title 1"", ""Movie Title 2"", ""Movie Title 3""]";
 	}
 
 	public async Task<List<Movie>> GetPersonalizedRecommendationsAsync(List<string> watchedMovieTitles, int count = 3)
@@ -28,51 +42,42 @@ public class RecommendationAgent : IRecommendationAgent
 
 		try
 		{
-			var chatClient = new ChatClient(_model, _openAiApiKey);
-
-			var systemPrompt = @"You are a movie recommendation expert. Based on the user's watched movies, 
-suggest similar movies they might enjoy. Return ONLY a JSON array of movie titles, nothing else. 
-Example format: [""Movie Title 1"", ""Movie Title 2"", ""Movie Title 3""]";
-
-			var userPrompt = $@"Based on these movies I've watched: {string.Join(", ", watchedMovieTitles)}
+			var userMessage = $@"Based on these movies I've watched: {string.Join(", ", watchedMovieTitles)}
 Please recommend {count} similar movies I might enjoy. Return only a JSON array of movie titles.";
 
+			// Build message list with system prompt and user request
 			var messages = new List<ChatMessage>
 			{
-				new SystemChatMessage(systemPrompt),
-				new UserChatMessage(userPrompt)
+				new SystemChatMessage(_systemPrompt),
+				new UserChatMessage(userMessage)
 			};
 
-			var response = await chatClient.CompleteChatAsync(messages);
+			// Execute AI agent chat completion
+			var response = await _chatClient.CompleteChatAsync(messages);
 			var content = response.Value.Content[0].Text;
 
-			var recommendedTitles = JsonSerializer.Deserialize<List<string>>(content.Trim()) ?? new List<string>();
+			// Parse AI response to get movie titles
+			var recommendedTitles = JsonSerializer.Deserialize<List<string>>(content.Trim()) 
+				?? new List<string>();
 
-			var recommendedMovies = new List<Movie>();
+			// Fetch full movie details from TMDB for each recommended title
+			var recommendations = new List<Movie>();
+
 			foreach (var title in recommendedTitles.Take(count))
 			{
 				var searchResults = await _tmdbService.SearchMoviesAsync(title);
-				if (searchResults.Any())
+				var movie = searchResults.FirstOrDefault();
+				if (movie != null)
 				{
-					var movie = await _tmdbService.GetMovieDetailsAsync(searchResults.First().TmdbId);
-					if (movie != null)
-					{
-						recommendedMovies.Add(movie);
-					}
+					recommendations.Add(movie);
 				}
 			}
 
-			if (recommendedMovies.Count < count)
-			{
-				var fallbackMovies = await _tmdbService.GetRecommendedMoviesAsync(count - recommendedMovies.Count);
-				recommendedMovies.AddRange(fallbackMovies);
-			}
-
-			return recommendedMovies.Take(count).ToList();
+			return recommendations;
 		}
-		catch (Exception ex)
+		catch (Exception)
 		{
-			Console.WriteLine($"Error getting AI recommendations: {ex.Message}");
+			// Fallback to popular movies if AI recommendation fails
 			return await _tmdbService.GetRecommendedMoviesAsync(count);
 		}
 	}
