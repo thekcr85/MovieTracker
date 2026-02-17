@@ -20,8 +20,10 @@ public class RecommendationAgent : IRecommendationAgent
 	{
 		_tmdbService = tmdbService;
 
-		var apiKey = configuration["OpenAI:ApiKey"] 
-			?? throw new ArgumentNullException("OpenAI:ApiKey", "OpenAI API Key is not configured");
+		// Read from environment variable first, then fallback to config
+		var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")
+			?? configuration["OpenAI:ApiKey"] 
+			?? throw new ArgumentNullException("OPENAI_API_KEY", "OpenAI API Key is not configured");
 
 		var modelName = configuration["OpenAI:ModelName"] ?? "gpt-4o-mini";
 
