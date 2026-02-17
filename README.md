@@ -1,4 +1,4 @@
-# MovieTracker ??
+# MovieTracker 🎬
 
 > AI-powered movie tracking app with personalized recommendations using OpenAI GPT-4o-mini
 
@@ -11,11 +11,11 @@
 
 A Blazor Server application for tracking movies with AI-powered recommendations:
 
-- ?? **TMDB Integration** - Search movies from The Movie Database
-- ?? **Watchlist** - Keep track of movies you want to watch
-- ? **Watched List** - Record movies you've seen with ratings and reviews
-- ?? **AI Recommendations** - Get personalized movie suggestions powered by OpenAI
-- ?? Smart movie details with cast, director, genres, and ratings
+- 🎥 **TMDB Integration** - Search movies from The Movie Database
+- 📋 **Watchlist** - Keep track of movies you want to watch
+- ✅ **Watched List** - Record movies you've seen with ratings and reviews
+- 🤖 **AI Recommendations** - Get personalized movie suggestions powered by OpenAI
+- 💬 Smart movie details with cast, director, genres, and ratings
 
 ## Tech Stack
 
@@ -55,7 +55,7 @@ echo OPENAI_API_KEY=sk-your-openai-key-here >> .env
 docker compose up
 
 # 4. Open browser
-# ? http://localhost:8080
+# → http://localhost:8080
 ```
 
 That's it! The app will:
@@ -67,39 +67,41 @@ That's it! The app will:
 
 ```
 src/
-??? MovieTracker.Domain/              # ?? Core (Entities, Interfaces)
-??? MovieTracker.Application/         # ?? Business Logic
-??? MovieTracker.Infrastructure/      # ?? Data + External APIs
-??? MovieTracker.Web/                 # ?? Blazor UI
-    ??? Components/Pages/
-        ??? Home.razor              # Search & AI Recommendations
-        ??? Watchlist.razor         # Movies to watch
-        ??? Watched.razor           # Watched movies with reviews
+├── MovieTracker.Domain/              # 🎯 Core (Entities, Interfaces)
+├── MovieTracker.Application/         # 💼 Business Logic
+├── MovieTracker.Infrastructure/      # 🔧 Data + External APIs
+└── MovieTracker.Web/                 # 🎨 Blazor UI
+    └── Components/Pages/
+        ├── Home.razor              # Search & AI Recommendations
+        ├── Watchlist.razor         # Movies to watch
+        └── Watched.razor           # Watched movies with reviews
 ```
 
-**Clean Architecture** - dependencies flow inward (Web ? Infra ? App ? Domain)
+**Clean Architecture** - dependencies flow inward (Web → Infra → App → Domain)
 
 ## Features
 
-### ?? Movie Search
+### 🔍 Movie Search
 - Real-time search powered by TMDB API
 - View detailed movie information (cast, director, ratings, overview)
 - High-quality movie posters
 
-### ?? Watchlist Management
+### 📋 Watchlist Management
 - Add movies you want to watch
 - Track when you added them
 - Move movies to watched when done
 
-### ? Watched Movies
+### ✅ Watched Movies
 - Mark movies as watched
 - Add your own ratings (1-10)
 - Write reviews and comments
 - Track when you watched them
 
-### ?? AI Recommendations
+### 🤖 AI Recommendations (Microsoft Agent Framework)
 - Personalized suggestions based on your watched movies
+- Built with **Microsoft Agent Framework** using latest 2026 .NET conventions
 - Powered by OpenAI GPT-4o-mini
+- Clean, simple agent implementation using `ChatClient` and system prompts
 - Smart recommendations considering your preferences
 
 ## Configuration
@@ -110,7 +112,7 @@ src/
 MYSQL_ROOT_PASSWORD=rootpassword123
 MYSQL_PASSWORD=moviepass
 TMDB_API_KEY=your-tmdb-api-key-here
-OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_API_KEY=sk-your-openai-key-here
 ```
 
 ## NuGet Packages
@@ -186,7 +188,7 @@ docker compose build --no-cache
 ### TMDB API Key (Free)
 1. Go to [themoviedb.org](https://www.themoviedb.org/)
 2. Create a free account
-3. Go to Settings ? API
+3. Go to Settings → API
 4. Request an API key (choose Developer)
 5. Copy your API key
 
@@ -199,13 +201,13 @@ docker compose build --no-cache
 
 ## Architecture Highlights
 
-? **Clean Architecture** - testable, maintainable  
-? **Blazor Server** - real-time interactive UI  
-? **EF Core 9** - modern ORM with MySQL 8 (Pomelo)  
-? **TMDB Integration** - comprehensive movie database  
-? **Microsoft Agent Framework** - structured AI orchestration  
-? **OpenAI Recommendations** - AI-powered suggestions  
-? **Docker** - one-command deployment
+✅ **Clean Architecture** - testable, maintainable  
+✅ **Blazor Server** - real-time interactive UI  
+✅ **EF Core 9** - modern ORM with MySQL 8 (Pomelo)  
+✅ **TMDB Integration** - comprehensive movie database  
+✅ **Microsoft Agent Framework** - structured AI orchestration  
+✅ **OpenAI Recommendations** - AI-powered suggestions  
+✅ **Docker** - one-command deployment
 
 ## Technology Details
 
@@ -220,7 +222,7 @@ docker compose build --no-cache
 
 ## Author
 
-**Your Name** � [GitHub](https://github.com/yourusername)
+**Your Name** • [GitHub](https://github.com/yourusername)
 
 Project demonstrating:
 - **Clean Architecture** with proper layer separation
@@ -239,7 +241,4 @@ MIT License - Personal project
 
 ---
 
-**Get Started:** `docker compose up` ??
-
-
-
+**Get Started:** `docker compose up` 🚀
